@@ -25,7 +25,7 @@ create table player
   rating_no     int not null default 0,
   max_rating_no int not null default 0,
   primary key (player_id),
-  constraint fk_player_participant foreign key (player_id) references participant (participant_id),
+  constraint fk_player_participant foreign key (player_id) references participant (participant_id) on delete cascade,
   constraint chk_player check (height_val >= 0 and weight_val >= 0
     and rating_no >= 0 and max_rating_no >= 0)
 );
@@ -44,8 +44,8 @@ create table player_x_coach
   player_id int,
   coach_id  int,
   primary key (player_id, coach_id),
-  constraint fk_player foreign key (player_id) references player (player_id),
-  constraint fk_coach foreign key (coach_id) references coach (coach_id)
+  constraint fk_player foreign key (player_id) references player (player_id) on delete cascade,
+  constraint fk_coach foreign key (coach_id) references coach (coach_id) on delete cascade
 );
 
 drop table if exists sponsor;
@@ -63,8 +63,8 @@ create table player_x_sponsor
   player_id  int,
   sponsor_id int,
   primary key (player_id, sponsor_id),
-  constraint fk_player foreign key (player_id) references player (player_id),
-  constraint fk_sponsor foreign key (sponsor_id) references sponsor (sponsor_id)
+  constraint fk_player foreign key (player_id) references player (player_id) on delete cascade,
+  constraint fk_sponsor foreign key (sponsor_id) references sponsor (sponsor_id) on delete cascade
 );
 
 drop table if exists tournament;
@@ -88,8 +88,8 @@ create table sponsor_x_tournament
   sponsor_id    int,
   tournament_id int,
   primary key (sponsor_id, tournament_id),
-  constraint fk_sponsor foreign key (sponsor_id) references sponsor (sponsor_id),
-  constraint fk_tournament foreign key (tournament_id) references tournament (tournament_id)
+  constraint fk_sponsor foreign key (sponsor_id) references sponsor (sponsor_id) on delete cascade,
+  constraint fk_tournament foreign key (tournament_id) references tournament (tournament_id) on delete cascade
 );
 
 drop table if exists match;
@@ -104,6 +104,9 @@ create table match
   duration_val  int not null default 0,
   match_dt      timestamp(0),
   primary key (match_id),
+  constraint fk_tournament foreign key (tournament_id) references tournament (tournament_id) on delete cascade,
+  constraint fk_player1 foreign key (player1_id) references player (player_id) on delete cascade,
+  constraint fk_player2 foreign key (player2_id) references player (player_id) on delete cascade,
   constraint chk_match check (duration_val >= 0 and (final_score similar to
                                                      '(0|1|2|3|4|5|6|7)-(0|1|2|3|4|5|6|7), (0|1|2|3|4|5|6|7)-(0|1|2|3|4|5|6|7)'
     or final_score similar to
@@ -120,6 +123,6 @@ create table player_x_tournament
   player_id     int,
   tournament_id int,
   primary key (player_id, tournament_id),
-  constraint fk_player foreign key (player_id) references player (player_id),
-  constraint fk_tournament foreign key (tournament_id) references tournament (tournament_id)
+  constraint fk_player foreign key (player_id) references player (player_id) on delete cascade,
+  constraint fk_tournament foreign key (tournament_id) references tournament (tournament_id) on delete cascade
 );
